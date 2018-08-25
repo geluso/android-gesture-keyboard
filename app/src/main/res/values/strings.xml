@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">CustomKeyboard</string>
+    <string name="fast_input_label">MyVim</string>
+</resources>
