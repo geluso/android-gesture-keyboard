@@ -253,7 +253,16 @@ public class MyInputMethodService extends InputMethodService
         deleteOneWordForward();
 
         InputConnection inputConnection = getCurrentInputConnection();
-        inputConnection.commitText(" ", 1);
+        ExtractedText et = inputConnection.getExtractedText(new ExtractedTextRequest(), 0);
+        String text = et.text.toString();
+
+        int selectionStart = et.selectionStart;
+        int selectionEnd = et.selectionEnd;
+
+        boolean isAtEnd = selectionStart == selectionEnd && selectionStart == text.length();
+        if (text.length() != 0 && !isAtEnd) {
+            inputConnection.commitText(" ", 1);
+        }
     }
 
     private void moveOneWordForward() {
