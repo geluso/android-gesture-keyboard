@@ -183,18 +183,29 @@ public class MyInputMethodService extends InputMethodService
         float percentX = Math.abs(dx) / width * 100;
         float percentY = Math.abs(dy) / height * 100;
 
-        boolean isMovingLeft = dx < 0;
-        boolean isMovingRight = dx > 0;
         boolean isMovingUp = dy < 0;
         boolean isMovingDown = dy > 0;
+        boolean isMovingLeft = dx < 0;
+        boolean isMovingRight = dx > 0;
+
+        boolean wentOffscreenUp = (yUp / height) < .01;
+        boolean wentOffscreenDown = (yUp / height) > .99;
+        boolean wentOffscreenLeft = (xUp / width) < .01;
+        boolean wentOffscreenRight = (xUp / width) > .99;
 
         Log.d("TOUCH", "stats");
         Log.d("TOUCH", "dx: " + dx + " dy: " + dy);
         Log.d("TOUCH", "x%: " + percentX + " y%: " + percentY);
-        Log.d("TOUCH", isMovingUp + " " + isMovingRight + " " + isMovingDown + " " + isMovingDown);
+        Log.d("DIRECTION", isMovingUp + " " + isMovingRight + " " + isMovingDown + " " + isMovingDown);
+        Log.d("OFFSCREEN", wentOffscreenUp  + " " + wentOffscreenRight + " " + wentOffscreenDown + " " + wentOffscreenLeft);
 
         int minLittleSwipe = 5;
         int minBigSwipe = 40;
+
+        if (wentOffscreenDown) {
+            deleteInsideWord();
+            return true;
+        }
 
         if (isMovingDown && percentY > 10) {
             if (minLittleSwipe < percentX && percentX < minBigSwipe) {
@@ -235,6 +246,14 @@ public class MyInputMethodService extends InputMethodService
         }
 
         return false;
+    }
+
+    private void deleteInsideWord() {
+        deleteOneWordBackward();
+        deleteOneWordForward();
+
+        InputConnection inputConnection = getCurrentInputConnection();
+        inputConnection.commitText(" ", 1);
     }
 
     private void moveOneWordForward() {
