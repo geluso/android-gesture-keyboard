@@ -297,6 +297,9 @@ public class MyInputMethodService extends InputMethodService
         CharSequence selectedText = inputConnection.getSelectedText(0);
 
         ExtractedText et = inputConnection.getExtractedText(new ExtractedTextRequest(), 0);
+        if (et == null) {
+            return;
+        }
         String text = et.text.toString();
         int selectionStart = et.selectionStart;
         int selectionEnd = et.selectionEnd;
